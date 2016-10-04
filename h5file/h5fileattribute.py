@@ -1,0 +1,193 @@
+#!/usr/bin/env python
+
+#############################################################################
+##
+## This file is part of Taurus
+## 
+## http://taurus-scada.org
+##
+## Copyright 2011 CELLS / ALBA Synchrotron, Bellaterra, Spain
+## 
+## Taurus is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Lesser General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+## 
+## Taurus is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Lesser General Public License for more details.
+## 
+## You should have received a copy of the GNU Lesser General Public License
+## along with Taurus.  If not, see <http://www.gnu.org/licenses/>.
+##
+#############################################################################
+
+__all__ = ["H5fileAttribute"]
+
+import numpy as np
+
+from taurus.core.taurusattribute import TaurusAttribute
+from taurus.core.taurusexception import TaurusException
+from taurus.core.taurusbasetypes import (DataType,
+                                         TaurusAttrValue,
+                                         TaurusTimeVal,
+                                         DataFormat,
+                                         TaurusEventType,
+                                         SubscriptionState)
+from taurus.core.taurushelper import Manager
+
+from taurus.external.pint import Quantity
+
+class H5fileAttribute(TaurusAttribute):
+    '''
+    A :class:`TaurusAttribute` that gives access to an H5file Process Variable.
+    
+    .. seealso:: :mod:`taurus.core.h5file` 
+    
+    .. warning:: In most cases this class should not be instantiated directly.
+                 Instead it should be done via the :meth:`H5fileFactory.getAttribute`
+    '''
+
+    # helper class property that stores a reference to the corresponding factory
+    _factory = None
+    _scheme = 'h5file'
+
+    def __init__(self, name, parent, **kwargs):
+        self.call__init__(TaurusAttribute, name, parent, **kwargs)
+        v = self.getNameValidator()
+        urigroups = v.getUriGroups(name)
+        self._attr_list = urigroups.get("attrname").split('/')
+        self._value = TaurusAttrValue()
+        self._label = self.getSimpleName()
+        self.__subscription_state = SubscriptionState.Unsubscribed
+
+        wantpolling = not self.isUsingEvents()
+        haspolling = self.isPollingEnabled()
+        if wantpolling:
+            self._activatePolling()
+        elif haspolling and not wantpolling:
+            self.disablePolling()
+
+    def eventReceived(self, evt_src, evt_type, evt_value):
+        try:
+            v = evt_value.rvalue
+        except AttributeError:
+            self.trace('Ignoring event from %s' % repr(evt_src))
+            return
+        # update the corresponding value
+        self.read()
+        if self.isUsingEvents():
+            self.fireEvent(evt_type, self._value)
+
+    def _read_h5_dataset(self):
+        """
+        Return the dataset given by attrname
+        :return: a HDF5 dataset
+        """
+        dev = self.getParentObj()
+        top = dev.getFileDescriptor()
+        for attr in self._attr_list:
+            data = top.get(attr)
+            top = data
+        return data
+
+    def __fireRegisterEvent(self, listener):
+        """
+        Method to fire a first change event
+        :param listener:
+        """
+        try:
+            v = self.read()
+            self.fireEvent(TaurusEventType.Change, v, listener)
+        except:
+            self.fireEvent(TaurusEventType.Error, None, listener)
+
+    def addListener(self, listener):
+        """ Add a TaurusListener object in the listeners list.
+            If it is the first listener, it triggers the subscription to
+            the referenced attributes.
+            If the listener is already registered nothing happens."""
+        ret = TaurusAttribute.addListener(self, listener)
+
+        if not ret:
+            return ret
+
+        if self.__subscription_state == SubscriptionState.Unsubscribed:
+            self.__subscription_state = SubscriptionState.Subscribed
+
+        assert len(self._listeners) >= 1
+
+        if self.isPollingActive():
+            Manager().addJob(self.__fireRegisterEvent, None, (listener,))
+        return ret
+
+    def removeListener(self, listener):
+        """ Remove a TaurusListener from the listeners list. If polling enabled
+            and it is the last element then stop the polling timer.
+            If the listener is not registered nothing happens."""
+        ret = TaurusAttribute.removeListener(self, listener)
+
+        if ret and not self.hasListeners():
+            self._deactivatePolling()
+            self.__subscription_state = SubscriptionState.Unsubscribed
+        return ret
+
+    #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+    # Necessary to overwrite
+    #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+    def isNumeric(self):
+        return self.type in [DataType.Float, DataType.Integer]
+
+    def isState(self):
+        # TODO it is not generic
+        return False
+
+    def encode(self, value):
+        # TODO Translate the given value into a hdf5 dataset
+        return value
+
+    def decode(self, attr_value):
+        """
+        Decode the dataset to the corresponding python attribute
+        :param attr_value: hdf5 dataset
+        :return:numpy array
+        """
+        # HDF5 dataset to numpy array
+        return np.array(attr_value)
+
+    def write(self, value, with_read=True):
+        # TODO: For the moment this scheme is read-only
+        raise TaurusException('Attributes are read-only')
+
+    def read(self, cache=True):
+        if cache and self._value.rvalue is not None:
+            return self._value
+        h5data = self._read_h5_dataset()
+        rvalue = self.decode(h5data)
+        if np.issubdtype(rvalue.dtype, np.number):
+            #Create a quantity is rvalue is numeric
+            self.type = DataType.Float
+            units = None #TODO: nexus file does not have units
+            rvalue = Quantity(rvalue, units=units)
+        self._value.rvalue = rvalue
+        # TODO: No assume DataFormat._1D
+        self.data_format = DataFormat._1D
+        self._value.time = TaurusTimeVal.now()
+        return self._value
+
+    def poll(self):
+        v = self.read(cache=False)
+        self.fireEvent(TaurusEventType.Periodic, v)
+
+    def _subscribeEvents(self):
+		# TODO implement events
+        pass
+
+    def _unsubscribeEvents(self):
+		# TODO implement events
+        pass
+
+    def isUsingEvents(self):
+        # TODO implement events
+        return False
