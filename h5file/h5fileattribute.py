@@ -53,6 +53,13 @@ class H5fileAttribute(TaurusAttribute):
     _factory = None
     _scheme = 'h5file'
 
+    # h5py uses numpy types
+    hdfdtype2taurusdtype = {'b': DataType.Boolean,
+                            'i': DataType.Integer,
+                            'f': DataType.Float,
+                            's': DataType.String
+                            }
+
     def __init__(self, name, parent, **kwargs):
         self.call__init__(TaurusAttribute, name, parent, **kwargs)
         v = self.getNameValidator()
@@ -156,6 +163,9 @@ class H5fileAttribute(TaurusAttribute):
         :param attr_value: hdf5 dataset
         :return:numpy array
         """
+        # Set the attribute type
+        hdfdtype = attr_value.dtype.kind
+        self.type = self.hdfdtype2taurusdtype.get(hdfdtype)
         # HDF5 dataset to numpy array
         return np.array(attr_value)
 
@@ -170,7 +180,6 @@ class H5fileAttribute(TaurusAttribute):
         rvalue = self.decode(h5data)
         if np.issubdtype(rvalue.dtype, np.number):
             #Create a quantity is rvalue is numeric
-            self.type = DataType.Float
             units = None #TODO: nexus file does not have units
             rvalue = Quantity(rvalue, units=units)
         self._value.rvalue = rvalue
