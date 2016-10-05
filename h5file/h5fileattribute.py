@@ -89,6 +89,9 @@ class H5fileAttribute(TaurusAttribute):
         top = dev.getFileDescriptor()
         for attr in self._attr_list:
             data = top.get(attr)
+            if data is None:
+                msg = "Unable to open object (Object %s doesn't exist)" % attr
+                raise TaurusException(msg)
             top = data
         return data
 
@@ -191,3 +194,15 @@ class H5fileAttribute(TaurusAttribute):
     def isUsingEvents(self):
         # TODO implement events
         return False
+
+## Just for test purpose (attr)
+if __name__ == "__main__":
+    import os
+    from taurus.core.h5file.h5filefactory import H5fileFactory
+    path2file = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                             'test/res/sardana_scan.h5')
+    attrname = 'entry259/measurement/mot76'
+    fullname = "h5file:%s::%s" %(path2file, attrname)
+    print fullname
+    attr = H5fileFactory().getAttribute(fullname)
+    print attr.read()
