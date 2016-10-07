@@ -33,7 +33,7 @@ from taurus.core import TaurusElementType
 from taurus.core.taurusvalidator import (TaurusAttributeNameValidator, 
                                          TaurusDeviceNameValidator, 
                                          TaurusAuthorityNameValidator)
-from taurus.core.h5file.h5filefactory import H5fileFactory
+from h5filefactory import H5fileFactory
 
 class H5fileAuthorityNameValidator(TaurusAuthorityNameValidator):
     scheme = 'h5file'
