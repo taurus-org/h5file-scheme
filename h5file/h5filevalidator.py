@@ -48,7 +48,7 @@ class H5fileDeviceNameValidator(TaurusDeviceNameValidator):
     authority = H5fileAuthorityNameValidator.authority
     # devname group is mandatory
     path = r'(?P<devname>(/(//+)?([A-Za-z]:/)?' \
-           r'([\w.\-_]+/)*[\w.\-_]+.(h4|h5|hdf5)))'
+           r'([\w.\-_]+/)*[\w.\-_]+.(h5|hdf5)))'
     query = '(?!)'
     fragment = '(?!)'
 
