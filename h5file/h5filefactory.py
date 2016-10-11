@@ -44,6 +44,7 @@ from taurus.core.taurusexception import TaurusException
 from taurus.core.util.log import Logger
 from taurus.core.util.singleton import Singleton
 from taurus.core.taurusfactory import TaurusFactory
+from taurus.core.tauruspollingtimer import TaurusPollingTimer
 
 class H5fileFactory(Singleton, TaurusFactory, Logger):
     """
@@ -153,8 +154,9 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
            :param period: (float) polling period (in seconds)
            :param unsubscribe_evts: (bool) whether or not to unsubscribe from events
         """
-        pass
-		# TODO
+        tmr = self.polling_timers.get(period, TaurusPollingTimer(period))
+        self.polling_timers[period] = tmr
+        tmr.addAttribute(attribute, self.isPollingEnabled())
 
     def removeAttributeFromPolling(self, attribute):
         """Deactivate the polling (client side) for the given attribute. If the
@@ -162,8 +164,15 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
 
            :param attribute: (str) attribute name.
         """
-        pass
-		# TODO
+        p = None
+        for period, timer in self.polling_timers.iteritems():
+            if timer.containsAttribute(attribute):
+                timer.removeAttribute(attribute)
+                if timer.getAttributeCount() == 0:
+                    p = period
+                break
+        if p:
+            del self.polling_timers[period]
 
     def getAuthorityNameValidator(self):
         """Return H5fileDatabaseNameValidator"""
