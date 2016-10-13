@@ -33,9 +33,11 @@ class H5fileDevice(TaurusDevice):
     H5file device object. 
     '''
     
-    # helper class property that stores a reference to the corresponding factory
+    # TODO: move to the h5file factory class
     _factory = None
+    # TODO: move to the h5file factory class
     _scheme = 'h5file'
+    # TODO: provide a default implementation in the factory base class
     _description = "A H5file Device"
 
     def __init__(self, name, **kw):

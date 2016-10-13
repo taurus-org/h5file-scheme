@@ -37,8 +37,9 @@ class H5fileAuthority(TaurusAuthority):
                  Instead it should be done via :meth:`H5fileFactory.getAuthority`
     '''
 
-    # helper class property that stores a reference to the corresponding factory
+    # TODO: move to the h5file factory class
     _factory = None
+    # TODO: move to the h5file factory class
     _scheme = 'h5file'
 
     def __init__(self, session, parent=None, storeCallback=None):    
