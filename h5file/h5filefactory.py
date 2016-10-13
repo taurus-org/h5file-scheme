@@ -87,7 +87,7 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
             raise TaurusException("Invalid Hdf5 authority name %s" % auth_name)
 
         if self._auth is None:
-            self._auth = H5fileAuthority(self.DEFAULT_AUTHORITY)
+            self._auth = H5fileAuthority(auth_name)
 
         return self._auth
 
