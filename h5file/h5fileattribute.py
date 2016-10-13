@@ -68,7 +68,6 @@ class H5fileAttribute(TaurusAttribute):
         self._attr_list = urigroups.get("attrname").split('/')
         self._value = TaurusAttrValue()
         self._label = self.getSimpleName()
-        self.__subscription_state = SubscriptionState.Unsubscribed
 
         wantpolling = not self.isUsingEvents()
         haspolling = self.isPollingEnabled()
@@ -87,47 +86,6 @@ class H5fileAttribute(TaurusAttribute):
         self.read()
         if self.isUsingEvents():
             self.fireEvent(evt_type, self._value)
-
-    def __fireRegisterEvent(self, listener):
-        """
-        Method to fire a first change event
-        :param listener:
-        """
-        try:
-            v = self.read()
-            self.fireEvent(TaurusEventType.Change, v, listener)
-        except:
-            self.fireEvent(TaurusEventType.Error, None, listener)
-
-    def addListener(self, listener):
-        """ Add a TaurusListener object in the listeners list.
-            If it is the first listener, it triggers the subscription to
-            the referenced attributes.
-            If the listener is already registered nothing happens."""
-        ret = TaurusAttribute.addListener(self, listener)
-
-        if not ret:
-            return ret
-
-        if self.__subscription_state == SubscriptionState.Unsubscribed:
-            self.__subscription_state = SubscriptionState.Subscribed
-
-        assert len(self._listeners) >= 1
-
-        if self.isPollingActive():
-            Manager().addJob(self.__fireRegisterEvent, None, (listener,))
-        return ret
-
-    def removeListener(self, listener):
-        """ Remove a TaurusListener from the listeners list. If polling enabled
-            and it is the last element then stop the polling timer.
-            If the listener is not registered nothing happens."""
-        ret = TaurusAttribute.removeListener(self, listener)
-
-        if ret and not self.hasListeners():
-            self._deactivatePolling()
-            self.__subscription_state = SubscriptionState.Unsubscribed
-        return ret
 
     #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     # Necessary to overwrite
