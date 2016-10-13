@@ -25,6 +25,7 @@
 
 __all__ = ["H5fileAttribute"]
 
+import h5py
 import numpy as np
 
 from taurus.core.taurusattribute import TaurusAttribute
@@ -86,21 +87,6 @@ class H5fileAttribute(TaurusAttribute):
         self.read()
         if self.isUsingEvents():
             self.fireEvent(evt_type, self._value)
-
-    def _read_h5_dataset(self):
-        """
-        Return the dataset given by attrname
-        :return: a HDF5 dataset
-        """
-        dev = self.getParentObj()
-        top = dev.getFileDescriptor()
-        for attr in self._attr_list:
-            data = top.get(attr)
-            if data is None:
-                msg = "Unable to open object (Object %s doesn't exist)" % attr
-                raise TaurusException(msg)
-            top = data
-        return data
 
     def __fireRegisterEvent(self, listener):
         """
@@ -176,8 +162,19 @@ class H5fileAttribute(TaurusAttribute):
     def read(self, cache=True):
         if cache and self._value.rvalue is not None:
             return self._value
-        h5data = self._read_h5_dataset()
-        rvalue = self.decode(h5data)
+        dev = self.getParentObj()
+        # each time we need to open and close the file, otherwise the
+        # file content is not updated
+        with h5py.File(dev.filename) as h5file:
+            top = h5file
+            for attr in self._attr_list:
+                data = top.get(attr)
+                if data is None:
+                    msg = "Unable to open object (Object %s doesn't exist)" % attr
+                    raise TaurusException(msg)
+                top = data
+            # we need to decode and copy the data while the file is still opened
+            rvalue = self.decode(data)
         if np.issubdtype(rvalue.dtype, np.number):
             #Create a quantity is rvalue is numeric
             units = None #TODO: nexus file does not have units

@@ -43,12 +43,3 @@ class H5fileDevice(TaurusDevice):
         v = self.getNameValidator()
         urigroups = v.getUriGroups(name)
         self.filename = urigroups.get("devname")
-
-    def getFileDescriptor(self, mode='r'):
-        '''
-        Get a h5py file descriptor.
-        :param mode: It is the open file mode
-        :return: `h5py.File` object
-        '''
-        # TODO Add possibility to manage persistence of the fd
-        return h5py.File(self.filename, mode)
