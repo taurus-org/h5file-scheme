@@ -75,6 +75,8 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
         self._auth = None
         self.scheme = "h5file"
 
+    # TODO: move it to the base class
+    # TODO: to be 100 % agnostic, it should not assume the parent-child relation
     def getAuthority(self, auth_name=None):
         """Obtain the H5fileDatabase object.
         :return: (H5fileAuthority)
@@ -86,11 +88,14 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
         if not v.isValid(auth_name):
             raise TaurusException("Invalid Hdf5 authority name %s" % auth_name)
 
+        # TODO: factory should store a cache of authorities
         if self._auth is None:
             self._auth = H5fileAuthority(auth_name)
 
         return self._auth
 
+    # TODO: move it to the base class
+    # TODO: to be 100 % agnostic, it should not assume the parent-child relation
     def getDevice(self, dev_name):
         """Obtain the object corresponding to the given device name. If the 
         corresponding device already exists, the existing instance is returned. 
@@ -114,7 +119,9 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
         dev = H5fileDevice(fullname)
         self._devs[fullname] = dev
         return dev
-        
+
+    # TODO: move it to the base class
+    # TODO: to be 100 % agnostic, it should not assume the parent-child relation
     def getAttribute(self, attr_name):
         """Obtain the object corresponding to the given attribute name. If the 
         corresponding attribute already exists, the existing instance is
@@ -146,6 +153,7 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
         self._attrs[fullname] = attr
         return attr
 
+    # TODO: move it to the base class
     def addAttributeToPolling(self, attribute, period, unsubscribe_evts=False):
         """Activates the polling (client side) for the given attribute with the
            given period (seconds).
@@ -158,6 +166,7 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
         self.polling_timers[period] = tmr
         tmr.addAttribute(attribute, self.isPollingEnabled())
 
+    # TODO: move it to the base class
     def removeAttributeFromPolling(self, attribute):
         """Deactivate the polling (client side) for the given attribute. If the
            polling of the attribute was not previously enabled, nothing happens.

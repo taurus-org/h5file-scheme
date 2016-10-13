@@ -50,8 +50,9 @@ class H5fileAttribute(TaurusAttribute):
                  Instead it should be done via the :meth:`H5fileFactory.getAttribute`
     '''
 
-    # helper class property that stores a reference to the corresponding factory
+    # TODO: move to the h5file factory class
     _factory = None
+    # TODO: move to the h5file factory class
     _scheme = 'h5file'
 
     # h5py uses numpy types
@@ -65,8 +66,12 @@ class H5fileAttribute(TaurusAttribute):
         self.call__init__(TaurusAttribute, name, parent, **kwargs)
         v = self.getNameValidator()
         urigroups = v.getUriGroups(name)
+        # TODO: not necessary - execute a readout at once
+        # but store the dsat_path here for the future readouts
         self._attr_list = urigroups.get("attrname").split('/')
+        # TODO: create a new instance at every readout
         self._value = TaurusAttrValue()
+        # TODO: to be moved to the Tango attribute
         self._label = self.getSimpleName()
 
         wantpolling = not self.isUsingEvents()
@@ -93,6 +98,7 @@ class H5fileAttribute(TaurusAttribute):
     def isNumeric(self):
         return self.type in [DataType.Float, DataType.Integer]
 
+    # TODO: this is tango centric
     def isState(self):
         # TODO it is not generic
         return False
@@ -133,6 +139,7 @@ class H5fileAttribute(TaurusAttribute):
                 top = data
             # we need to decode and copy the data while the file is still opened
             rvalue = self.decode(data)
+        # TODO: this is also part of decoding - move it to decode
         if np.issubdtype(rvalue.dtype, np.number):
             #Create a quantity is rvalue is numeric
             units = None #TODO: nexus file does not have units
