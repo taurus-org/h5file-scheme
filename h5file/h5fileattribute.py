@@ -52,7 +52,6 @@ class H5fileAttribute(TaurusAttribute):
 
     # TODO: move to the h5file factory class
     _factory = None
-    # TODO: move to the h5file factory class
     _scheme = 'h5file'
 
     # h5py uses numpy types

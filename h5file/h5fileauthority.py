@@ -39,7 +39,6 @@ class H5fileAuthority(TaurusAuthority):
 
     # TODO: move to the h5file factory class
     _factory = None
-    # TODO: move to the h5file factory class
     _scheme = 'h5file'
 
     def __init__(self, session, parent=None, storeCallback=None):

@@ -35,7 +35,6 @@ class H5fileDevice(TaurusDevice):
     
     # TODO: move to the h5file factory class
     _factory = None
-    # TODO: move to the h5file factory class
     _scheme = 'h5file'
     # TODO: provide a default implementation in the factory base class
     _description = "A H5file Device"
