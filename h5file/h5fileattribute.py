@@ -68,11 +68,12 @@ class H5fileAttribute(TaurusAttribute):
         urigroups = v.getUriGroups(name)
         # TODO: not necessary - execute a readout at once
         # but store the dsat_path here for the future readouts
-        self._attr_list = urigroups.get("attrname").split('/')
+        self._attr_name = urigroups.get("attrname")
         # TODO: create a new instance at every readout
         self._value = TaurusAttrValue()
         # TODO: to be moved to the Tango attribute
         self._label = self.getSimpleName()
+        self._units = None
 
         wantpolling = not self.isUsingEvents()
         haspolling = self.isPollingEnabled()
@@ -111,13 +112,31 @@ class H5fileAttribute(TaurusAttribute):
         """
         Decode the dataset to the corresponding python attribute
         :param attr_value: hdf5 dataset
-        :return:numpy array
+        :return:taurus valid type
         """
-        # Set the attribute type
+        # Transform hdf5 attribute to numpy array
+        attr_value = np.array(attr_value)
+        # TODO: extract scalars from hdf5 attribute
+        # attr_value = attr_value[0]
+
+        # get the attribute type
         hdfdtype = attr_value.dtype.kind
         self.type = self.hdfdtype2taurusdtype.get(hdfdtype)
-        # HDF5 dataset to numpy array
-        return np.array(attr_value)
+
+        dimension = len(np.shape(attr_value))
+        if dimension == 0:
+            self.data_format = DataFormat._0D
+        elif dimension == 1:
+            self.data_format = DataFormat._1D
+        elif dimension == 2:
+            self.data_format = DataFormat._2D
+
+        if self.isNumeric():
+            # numeric attributes must be Quantities
+            value = Quantity(attr_value, units=self._units)
+        elif self.type is DataType.String:
+            value = attr_value.tolist()
+        return value
 
     def write(self, value, with_read=True):
         # TODO: For the moment this scheme is read-only
@@ -130,23 +149,15 @@ class H5fileAttribute(TaurusAttribute):
         # each time we need to open and close the file, otherwise the
         # file content is not updated
         with h5py.File(dev.filename) as h5file:
-            top = h5file
-            for attr in self._attr_list:
-                data = top.get(attr)
-                if data is None:
-                    msg = "Unable to open object (Object %s doesn't exist)" % attr
-                    raise TaurusException(msg)
-                top = data
+            data = h5file.get(self._attr_name)
+            # get units hdf5 attribute if it exist
+            self._units = data.attrs.get("units")
+            if data is None:
+                msg = "Unable to open object (Object %s doesn't exist)" % attr
+                raise TaurusException(msg)
             # we need to decode and copy the data while the file is still opened
             rvalue = self.decode(data)
-        # TODO: this is also part of decoding - move it to decode
-        if np.issubdtype(rvalue.dtype, np.number):
-            #Create a quantity is rvalue is numeric
-            units = None #TODO: nexus file does not have units
-            rvalue = Quantity(rvalue, units=units)
         self._value.rvalue = rvalue
-        # TODO: No assume DataFormat._1D
-        self.data_format = DataFormat._1D
         self._value.time = TaurusTimeVal.now()
         return self._value
 
