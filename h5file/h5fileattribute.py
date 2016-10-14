@@ -140,6 +140,10 @@ class H5fileAttribute(TaurusAttribute):
         # TODO: For the moment this scheme is read-only
         raise TaurusException('Attributes are read-only')
 
+    def isWritable(self, cache=True):
+        # TODO: This method is need if the scheme is writable
+        return self.writable
+
     def read(self, cache=True):
         if cache and self._last_valuevalue is not None:
             return self._last_value
