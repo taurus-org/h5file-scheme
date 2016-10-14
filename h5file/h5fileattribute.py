@@ -63,7 +63,7 @@ class H5fileAttribute(TaurusAttribute):
                             }
 
     def __init__(self, name, parent, **kwargs):
-        self.call__init__(TaurusAttribute, name, parent, **kwargs)
+        TaurusAttribute.__init__(self, name, parent, **kwargs)
         v = self.getNameValidator()
         urigroups = v.getUriGroups(name)
         # TODO: not necessary - execute a readout at once

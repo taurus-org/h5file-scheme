@@ -40,8 +40,8 @@ class H5fileDevice(TaurusDevice):
     # TODO: provide a default implementation in the factory base class
     _description = "A H5file Device"
 
-    def __init__(self, name, **kw):
-        self.call__init__(TaurusDevice, name, **kw)
+    def __init__(self, name, **kwargs):
+        TaurusDevice.__init__(self, name, **kwargs)
         v = self.getNameValidator()
         urigroups = v.getUriGroups(name)
         self.filename = urigroups.get("devname")

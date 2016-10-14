@@ -42,5 +42,5 @@ class H5fileAuthority(TaurusAuthority):
     # TODO: move to the h5file factory class
     _scheme = 'h5file'
 
-    def __init__(self, session, parent=None, storeCallback=None):    
-        self.call__init__(TaurusAuthority, session, parent)
+    def __init__(self, session, parent=None, storeCallback=None):
+        TaurusAuthority.__init__(self, session, parent)

@@ -68,8 +68,8 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
     def init(self, *args, **kwargs):
         """Singleton instance initialization."""
         name = self.__class__.__name__
-        self.call__init__(Logger, name)
-        self.call__init__(TaurusFactory)
+        Logger.__init__(self, name)
+        TaurusFactory.__init__(self)
         self._attrs = weakref.WeakValueDictionary()
         self._devs = weakref.WeakValueDictionary()
         self._auth = None
