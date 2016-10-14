@@ -69,8 +69,7 @@ class H5fileAttribute(TaurusAttribute):
         # TODO: not necessary - execute a readout at once
         # but store the dsat_path here for the future readouts
         self._attr_name = urigroups.get("attrname")
-        # TODO: create a new instance at every readout
-        self._value = TaurusAttrValue()
+        self._last_value = None
         # TODO: to be moved to the Tango attribute
         self._label = self.getSimpleName()
         self._units = None
@@ -89,9 +88,9 @@ class H5fileAttribute(TaurusAttribute):
             self.trace('Ignoring event from %s' % repr(evt_src))
             return
         # update the corresponding value
-        self.read()
+        value = self.read()
         if self.isUsingEvents():
-            self.fireEvent(evt_type, self._value)
+            self.fireEvent(evt_type, value)
 
     #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     # Necessary to overwrite
@@ -143,8 +142,8 @@ class H5fileAttribute(TaurusAttribute):
         raise TaurusException('Attributes are read-only')
 
     def read(self, cache=True):
-        if cache and self._value.rvalue is not None:
-            return self._value
+        if cache and self._last_valuevalue is not None:
+            return self._last_value
         dev = self.getParentObj()
         # each time we need to open and close the file, otherwise the
         # file content is not updated
@@ -157,9 +156,11 @@ class H5fileAttribute(TaurusAttribute):
                 raise TaurusException(msg)
             # we need to decode and copy the data while the file is still opened
             rvalue = self.decode(data)
-        self._value.rvalue = rvalue
-        self._value.time = TaurusTimeVal.now()
-        return self._value
+        value = TaurusAttrValue()
+        value.rvalue = rvalue
+        value.time = TaurusTimeVal.now()
+        self._last_value = value
+        return value
 
     def poll(self):
         v = self.read(cache=False)
