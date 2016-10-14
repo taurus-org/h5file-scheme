@@ -50,8 +50,6 @@ class H5fileAttribute(TaurusAttribute):
                  Instead it should be done via the :meth:`H5fileFactory.getAttribute`
     '''
 
-    # TODO: move to the h5file factory class
-    _factory = None
     _scheme = 'h5file'
 
     # h5py uses numpy types
