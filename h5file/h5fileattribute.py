@@ -38,7 +38,7 @@ from taurus.core.taurusbasetypes import (DataType,
                                          SubscriptionState)
 from taurus.core.taurushelper import Manager
 
-from taurus.external.pint import Quantity
+from taurus.external.pint import Quantity, UndefinedUnitError
 
 class H5fileAttribute(TaurusAttribute):
     '''
@@ -129,7 +129,10 @@ class H5fileAttribute(TaurusAttribute):
 
         if self.isNumeric():
             # numeric attributes must be Quantities
-            value = Quantity(attr_value, units=self._units)
+            try:
+                value = Quantity(attr_value, units=self._units)
+            except UndefinedUnitError:
+                value = Quantity(attr_value, units="dimensionless")
         elif self.type is DataType.String:
             value = attr_value.tolist()
         return value
