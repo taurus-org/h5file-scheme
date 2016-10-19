@@ -77,16 +77,6 @@ class H5fileAttribute(TaurusAttribute):
         elif haspolling and not wantpolling:
             self.disablePolling()
 
-    def eventReceived(self, evt_src, evt_type, evt_value):
-        try:
-            v = evt_value.rvalue
-        except AttributeError:
-            self.trace('Ignoring event from %s' % repr(evt_src))
-            return
-        # update the corresponding value
-        value = self.read()
-        if self.isUsingEvents():
-            self.fireEvent(evt_type, value)
 
     #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     # Necessary to overwrite
