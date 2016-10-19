@@ -34,9 +34,7 @@ from taurus.core.taurusbasetypes import (DataType,
                                          TaurusAttrValue,
                                          TaurusTimeVal,
                                          DataFormat,
-                                         TaurusEventType,
-                                         SubscriptionState)
-from taurus.core.taurushelper import Manager
+                                         TaurusEventType)
 
 from taurus.external.pint import Quantity, UndefinedUnitError
 
