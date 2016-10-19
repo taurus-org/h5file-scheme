@@ -67,8 +67,6 @@ class H5fileAttribute(TaurusAttribute):
         # but store the dsat_path here for the future readouts
         self._attr_name = urigroups.get("attrname")
         self._last_value = None
-        # TODO: to be moved to the Tango attribute
-        self._label = self.getSimpleName()
 
         wantpolling = not self.isUsingEvents()
         haspolling = self.isPollingEnabled()
