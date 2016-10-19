@@ -72,13 +72,6 @@ class H5fileAttribute(TaurusAttribute):
         elif haspolling and not wantpolling:
             self.disablePolling()
 
-
-    #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-    # Necessary to overwrite
-    #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-    def isNumeric(self):
-        return self.type in [DataType.Float, DataType.Integer]
-
     # TODO: this is tango centric - to be removed
     def isState(self):
         return False
