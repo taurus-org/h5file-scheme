@@ -34,9 +34,7 @@ from taurus.core.taurusbasetypes import (DataType,
                                          TaurusAttrValue,
                                          TaurusTimeVal,
                                          DataFormat,
-                                         TaurusEventType,
-                                         SubscriptionState)
-from taurus.core.taurushelper import Manager
+                                         TaurusEventType)
 
 from taurus.external.pint import Quantity, UndefinedUnitError
 
@@ -63,12 +61,9 @@ class H5fileAttribute(TaurusAttribute):
         TaurusAttribute.__init__(self, name, parent, **kwargs)
         v = self.getNameValidator()
         urigroups = v.getUriGroups(name)
-        # TODO: not necessary - execute a readout at once
-        # but store the dsat_path here for the future readouts
+        # store the hdf5 path for future readouts
         self._attr_name = urigroups.get("attrname")
         self._last_value = None
-        # TODO: to be moved to the Tango attribute
-        self._label = self.getSimpleName()
 
         wantpolling = not self.isUsingEvents()
         haspolling = self.isPollingEnabled()
@@ -77,30 +72,13 @@ class H5fileAttribute(TaurusAttribute):
         elif haspolling and not wantpolling:
             self.disablePolling()
 
-    def eventReceived(self, evt_src, evt_type, evt_value):
-        try:
-            v = evt_value.rvalue
-        except AttributeError:
-            self.trace('Ignoring event from %s' % repr(evt_src))
-            return
-        # update the corresponding value
-        value = self.read()
-        if self.isUsingEvents():
-            self.fireEvent(evt_type, value)
-
-    #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-    # Necessary to overwrite
-    #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-    def isNumeric(self):
-        return self.type in [DataType.Float, DataType.Integer]
-
-    # TODO: this is tango centric
+    # TODO: this is tango centric - to be removed
     def isState(self):
-        # TODO it is not generic
         return False
 
     def encode(self, value):
-        # TODO Translate the given value into a hdf5 dataset
+        # TODO: implement it if you want to support writable attributes
+        # here you should translate the given value into a hdf5 dataset
         return value
 
     def decode(self, attr_value):
@@ -138,13 +116,14 @@ class H5fileAttribute(TaurusAttribute):
             value = attr_value_np.tolist()
         return value
 
+    def isWritable(self, cache=True):
+        # TODO: implement it if you want to support writable attributes
+        return False
+
     def write(self, value, with_read=True):
-        # TODO: For the moment this scheme is read-only
+        # TODO: implement it if you want to support writable attributes
         raise TaurusException('Attributes are read-only')
 
-    def isWritable(self, cache=True):
-        # TODO: This method is need if the scheme is writable
-        return self.writable
 
     def read(self, cache=True):
         if cache and self._last_valuevalue is not None:
@@ -155,7 +134,7 @@ class H5fileAttribute(TaurusAttribute):
         with h5py.File(dev.filename) as h5file:
             data = h5file.get(self._attr_name)
             if data is None:
-                msg = "Unable to open object (Object %s doesn't exist)" % attr
+                msg = "Object %s does not exist" % self._attr_name
                 raise TaurusException(msg)
             # we need to decode and copy the data while the file is still opened
             rvalue = self.decode(data)
@@ -169,17 +148,18 @@ class H5fileAttribute(TaurusAttribute):
         v = self.read(cache=False)
         self.fireEvent(TaurusEventType.Periodic, v)
 
+    def isUsingEvents(self):
+        # TODO: implement it if you want to support writable attributes
+        return False
+
     def _subscribeEvents(self):
-		# TODO implement events
+        # TODO: implement it if you want to support writable attributes
         pass
 
     def _unsubscribeEvents(self):
-		# TODO implement events
+        # TODO: implement it if you want to support writable attributes
         pass
 
-    def isUsingEvents(self):
-        # TODO implement events
-        return False
 
 ## Just for test purpose (attr)
 if __name__ == "__main__":
