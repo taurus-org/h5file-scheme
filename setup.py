@@ -24,15 +24,15 @@
 ##############################################################################
 
 from setuptools import setup, find_packages
-import taurus
 
 version = '0.0.1'
 description = 'h5file Taurus scheme'
-long_description = ''' h5file is the Taurus scheme for manage hdf5 files.
+long_description = ''' h5file is the Taurus scheme for accessing hdf5 files.
 This first implementation offers a read-only scheme with basic interface to
-access to hdf5 files.'''
-license = taurus.Release.license
-platforms = taurus.Release.platforms
+access hdf5 files.'''
+license = 'LGPL'
+platforms = ['Linux', 'Windows']
+
 
 authors = 'ctgensoft'
 email = 'ctgensoft@cells.es'
