@@ -72,10 +72,6 @@ class H5fileAttribute(TaurusAttribute):
         elif haspolling and not wantpolling:
             self.disablePolling()
 
-    # TODO: this is tango centric - to be removed
-    def isState(self):
-        return False
-
     def encode(self, value):
         # TODO: implement it if you want to support writable attributes
         # here you should translate the given value into a hdf5 dataset
