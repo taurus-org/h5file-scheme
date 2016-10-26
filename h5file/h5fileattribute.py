@@ -122,7 +122,7 @@ class H5fileAttribute(TaurusAttribute):
 
 
     def read(self, cache=True):
-        if cache and self._last_valuevalue is not None:
+        if cache and self._last_value is not None:
             return self._last_value
         dev = self.getParentObj()
         # each time we need to open and close the file, otherwise the
@@ -160,7 +160,7 @@ class H5fileAttribute(TaurusAttribute):
 ## Just for test purpose (attr)
 if __name__ == "__main__":
     import os
-    from taurus.core.h5file.h5filefactory import H5fileFactory
+    from h5file.h5filefactory import H5fileFactory
     path2file = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                              'test/res/sardana_scan.h5')
     attrname = 'entry259/measurement/mot76'
