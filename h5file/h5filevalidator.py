@@ -36,6 +36,9 @@ from taurus.core.taurusvalidator import (TaurusAttributeNameValidator,
 from h5filefactory import H5fileFactory
 
 class H5fileAuthorityNameValidator(TaurusAuthorityNameValidator):
+    """A validator for Authority names in the h5file scheme.
+    For now it is a dummy one, allowing only //localhost
+    """
     scheme = 'h5file'
     authority = '//localhost'
     path = '(?!)'
@@ -43,7 +46,8 @@ class H5fileAuthorityNameValidator(TaurusAuthorityNameValidator):
     fragment = '(?!)'
 
 
-class H5fileDeviceNameValidator(TaurusDeviceNameValidator): 
+class H5fileDeviceNameValidator(TaurusDeviceNameValidator):
+    """A validator for Device names in the h5file scheme."""
     scheme = 'h5file'
     authority = H5fileAuthorityNameValidator.authority
     # devname group is mandatory

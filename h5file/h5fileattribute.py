@@ -39,14 +39,14 @@ from taurus.core.taurusbasetypes import (DataType,
 from taurus.external.pint import Quantity, UndefinedUnitError
 
 class H5fileAttribute(TaurusAttribute):
-    '''
+    """
     A :class:`TaurusAttribute` that gives access to an H5file Process Variable.
-    
-    .. seealso:: :mod:`taurus.core.h5file` 
-    
+
+    .. seealso:: :mod:`taurus.core.h5file`
+
     .. warning:: In most cases this class should not be instantiated directly.
                  Instead it should be done via the :meth:`H5fileFactory.getAttribute`
-    '''
+    """
 
     _scheme = 'h5file'
 

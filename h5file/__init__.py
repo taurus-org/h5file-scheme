@@ -22,6 +22,39 @@
 ##
 #############################################################################
 
+"""
+HDF5 files extension for taurus core model.
+
+This is a Taurus scheme that provides access to the contents of hdf5 files
+as Taurus Attributes. It uses :mod:`h5py`.
+
+h5py.File objects are mapped as H5fileDevices and the datasets within the file
+are mapped as H5fileAttributes.
+
+For example, to get the value of a the dataset foo/bar from the file
+/path/to/myfile.h5, you should do something like::
+
+    >>> import taurus
+    >>> myattr = taurus.Attribute('h5file:/path/to/myfile.h5::foo/bar')
+
+h5file attributes (should) work just as other Taurus attributes and can be
+referred by their model name wherever a Taurus Attribute model is expected. For
+example, you can launch a `TaurusForm` with a h5file attribute::
+
+    $> taurusform h5file:/path/to/myfile.h5::foo/bar
+
+Similarly, you can combine h5file attributes with attributes from other
+schemes::
+
+    $> taurusform 'h5file:/path/to/myfile.h5::foo/bar' \
+       'tango:sys/tg_test/1/float_scalar'\
+       'eval:{h5file:/path/to/myfile.h5::foo/bar}*{tango:sys/tg_test/1/ampli}'
+
+"""
+
+
+# TODO: document syntax
+
 from h5fileattribute import *                                                    
 from h5fileauthority import *
 from h5filedevice import *

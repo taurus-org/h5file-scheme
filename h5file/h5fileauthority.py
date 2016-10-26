@@ -30,12 +30,12 @@ from taurus.core.taurusauthority import TaurusAuthority
 from taurus import Factory
 
 class H5fileAuthority(TaurusAuthority):
-    '''
-    Dummy authority class for H5file 
-    
+    """
+    Dummy authority class for H5file
+
     .. warning:: In most cases this class should not be instantiated directly.
                  Instead it should be done via :meth:`H5fileFactory.getAuthority`
-    '''
+    """
 
     _scheme = 'h5file'
 

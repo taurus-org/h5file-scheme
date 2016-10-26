@@ -29,9 +29,9 @@ import h5py
 from taurus.core.taurusdevice import TaurusDevice
 
 class H5fileDevice(TaurusDevice):
-    '''
-    H5file device object. 
-    '''
+    """
+    H5file device object.
+    """
 
     _scheme = 'h5file'
     # TODO: provide a default implementation in the factory base class
