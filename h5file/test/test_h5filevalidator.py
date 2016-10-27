@@ -23,7 +23,7 @@
 ##
 #############################################################################
 
-"""Test for taurus.core.h5file.test.test_h5filevalidator..."""
+"""Tests for h5file.h5filevalidator..."""
 
 __docformat__ = 'restructuredtext'
 
@@ -31,7 +31,7 @@ __docformat__ = 'restructuredtext'
 from taurus.external import unittest
 from taurus.core.test import (valid, invalid, names,
                               AbstractNameValidatorTestCase)
-from taurus.core.h5file.h5filevalidator import \
+from h5file.h5filevalidator import \
                                 (H5fileAuthorityNameValidator,
                                  H5fileDeviceNameValidator,
                                  H5fileAttributeNameValidator)
