@@ -54,7 +54,7 @@ class H5fileAttribute(TaurusAttribute):
     hdfdtype2taurusdtype = {'b': DataType.Boolean,
                             'i': DataType.Integer,
                             'f': DataType.Float,
-                            's': DataType.String
+                            'S': DataType.String
                             }
 
     def __init__(self, name, parent, **kwargs):
