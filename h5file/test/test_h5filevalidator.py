@@ -28,7 +28,7 @@
 __docformat__ = 'restructuredtext'
 
 
-from taurus.external import unittest
+import unittest
 from taurus.core.test import (valid, invalid, names,
                               AbstractNameValidatorTestCase)
 from h5file.h5filevalidator import \

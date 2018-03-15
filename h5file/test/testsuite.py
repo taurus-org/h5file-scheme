@@ -23,7 +23,7 @@
 ##
 ##############################################################################
 
-from taurus.external import unittest
+import unittest
 
 def get_suite():
     # use the default shared TestLoader instance
