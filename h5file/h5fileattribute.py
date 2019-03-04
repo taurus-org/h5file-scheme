@@ -148,14 +148,6 @@ class H5fileAttribute(TaurusAttribute):
         # TODO: implement it if you want to support writable attributes
         return False
 
-    def _subscribeEvents(self):
-        # TODO: implement it if you want to support writable attributes
-        pass
-
-    def _unsubscribeEvents(self):
-        # TODO: implement it if you want to support writable attributes
-        pass
-
 
 ## Just for test purpose (attr)
 if __name__ == "__main__":
