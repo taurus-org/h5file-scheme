@@ -36,7 +36,8 @@ from taurus.core.taurusbasetypes import (DataType,
                                          DataFormat,
                                          TaurusEventType)
 
-from taurus.external.pint import Quantity, UndefinedUnitError
+from taurus.core.units import Quantity
+from pint import UndefinedUnitError
 
 class H5fileAttribute(TaurusAttribute):
     """
