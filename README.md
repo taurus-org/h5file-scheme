@@ -4,12 +4,7 @@ This is a Taurus scheme that provides access to the contents of hdf5 files
 as Taurus Attributes. It uses the [h5py](http://h5py.org) module.
 
 ## Enabling
-To enable it, install `h5file` and edit `<taurus>/tauruscustomsettings.py`
-to add `h5file` to the `EXTRA_SCHEME_MODULES` list. For example:
-
-```python
-EXTRA_SCHEME_MODULES = ['h5file']
-```
+To enable it, just install `h5file` (taurus will detect it and use it if installed)
 
 ## Examples:
 

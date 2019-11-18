@@ -41,6 +41,11 @@ url = 'http://www.taurus-scada.org/en/stable/devel/core_tutorial.html'
 install_requires = ['taurus>=4.0.1',
                     'h5py']
 
+entry_points = {
+    "taurus.core.schemes": ["h5file = h5file",],
+}
+
+
 setup(name='h5file',
       version=version,
       description=description,
@@ -55,4 +60,5 @@ setup(name='h5file',
       include_package_data=True,
       install_requires=install_requires,
       test_suite='h5file.test.testsuite.get_suite',
+      entry_points=entry_points,
       )
