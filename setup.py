@@ -25,7 +25,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.1'
+version = '0.0.2'
 description = 'h5file Taurus scheme'
 long_description = ''' h5file is the Taurus scheme for accessing hdf5 files.
 This first implementation offers a read-only scheme with basic interface to
