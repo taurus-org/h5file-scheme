@@ -52,12 +52,13 @@ schemes::
 
 """
 
+from __future__ import absolute_import
 
 # TODO: document syntax
 
-from h5fileattribute import *                                                    
-from h5fileauthority import *
-from h5filedevice import *
-from h5filefactory import *
-from h5filevalidator import *
+from .h5fileattribute import *                                                    
+from .h5fileauthority import *
+from .h5filedevice import *
+from .h5filefactory import *
+from .h5filevalidator import *
 

@@ -158,6 +158,6 @@ if __name__ == "__main__":
                              'test/res/sardana_scan.h5')
     attrname = 'entry259/measurement/mot76'
     fullname = "h5file:%s::%s" %(path2file, attrname)
-    print fullname
+    print(fullname)
     attr = H5fileFactory().getAttribute(fullname)
-    print attr.read()
+    print(attr.read())

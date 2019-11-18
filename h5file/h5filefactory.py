@@ -22,6 +22,8 @@
 ##
 #############################################################################
 
+from __future__ import absolute_import
+
 __all__ = ['H5fileFactory']
 
 try:
@@ -35,9 +37,9 @@ except ImportError:
     raise
 
 from taurus.core.taurusbasetypes import TaurusElementType
-from h5fileattribute import H5fileAttribute
-from h5fileauthority import H5fileAuthority
-from h5filedevice import H5fileDevice
+from .h5fileattribute import H5fileAttribute
+from .h5fileauthority import H5fileAuthority
+from .h5filedevice import H5fileDevice
 from taurus.core.util.log import Logger
 from taurus.core.util.singleton import Singleton
 from taurus.core.taurusfactory import TaurusFactory
@@ -70,17 +72,17 @@ class H5fileFactory(Singleton, TaurusFactory, Logger):
 
     def getAuthorityNameValidator(self):
         """Return H5fileDatabaseNameValidator"""
-        import h5filevalidator
+        from . import h5filevalidator
         return h5filevalidator.H5fileAuthorityNameValidator()
 
     def getDeviceNameValidator(self):
         """Return H5fileDeviceNameValidator"""
-        import h5filevalidator
+        from . import h5filevalidator
         return h5filevalidator.H5fileDeviceNameValidator()
 
     def getAttributeNameValidator(self):
         """Return H5fileAttributeNameValidator"""
-        import h5filevalidator
+        from . import h5filevalidator
         return h5filevalidator.H5fileAttributeNameValidator()
 
 
@@ -89,4 +91,4 @@ if __name__ == "__main__":
     import taurus
     f = taurus.Factory('h5file')
     f2 = H5fileFactory()
-    print f2.scheme
+    print(f2.scheme)

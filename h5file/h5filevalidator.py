@@ -23,6 +23,9 @@
 ##
 #############################################################################
 
+
+from __future__ import absolute_import
+
 __all__ = ["H5fileAuthorityNameValidator", "H5fileDeviceNameValidator", 
            "H5fileAttributeNameValidator"]
 
@@ -33,7 +36,7 @@ from taurus.core import TaurusElementType
 from taurus.core.taurusvalidator import (TaurusAttributeNameValidator, 
                                          TaurusDeviceNameValidator, 
                                          TaurusAuthorityNameValidator)
-from h5filefactory import H5fileFactory
+from .h5filefactory import H5fileFactory
 
 class H5fileAuthorityNameValidator(TaurusAuthorityNameValidator):
     """A validator for Authority names in the h5file scheme.
